@@ -1,38 +1,61 @@
 import React, { useState, useEffect } from 'react';
-import Card from './layout/Card';
+import { makeStyles } from '@material-ui/core/styles';
+import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
 
+import Card from './layout/Card';
+import Table from "./layout/Table";
 import API_URLS from '../config/config';
 
-function CoursesCard() {
-    const [courseData, setCourseData] = useState([]);
-    const [hws, setHws] = useState([]);
+const useStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+  },
+  paper: {
+    padding: theme.spacing(2),
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+  },
+}));
 
-    const handleHWs = newValue => {
-      setHws(newValue);
-    }
+function Courses() {
+  const classes = useStyles();
+  const [courseData, setCourseData] = useState([]);
+  const [hw, setHws] = useState([]);
 
-    useEffect(() => {
-      const fetchCourses = async() => {
-          console.log('fetching getCourses', API_URLS.getCourses);
-          const res = await fetch(API_URLS.getCourses);
-          const coursesArray = await res.json();
-          setCourseData(coursesArray);
-      }
-      fetchCourses();
-
-    }, []);
-  
-    return (
-      <React.Fragment>
-      {courseData.map(item => (
-         <Card key={item.name} name={item.name} id={item.link} updateHW={handleHWs} />
-      ))}
-      {hws.Assignments && hws.Assignments.map(item => (
-         <Card key={item.Name} name={item.Name} id={item.Link} />
-      ))}
-      </React.Fragment>
-    );
+  const handleHWs = newValue => {
+    setHws(newValue);
   }
-  
-  export default CoursesCard;
-  
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      console.log('fetching getCourses', API_URLS.getCourses);
+      const res = await fetch(API_URLS.getCourses);
+      const coursesArray = await res.json();
+      setCourseData(coursesArray);
+    }
+    fetchCourses();
+
+  }, []);
+
+  return (
+    <React.Fragment>
+      <Grid container
+        direction="row-reverse"
+        justify="space-between"
+        alignItems="stretch"
+        spacing={5}>
+           <Grid item xs={8}>
+          {hw.Assignments && <Table className={classes.paper} item={hw}/>}
+        </Grid>
+        <Grid item xs={4}>
+          {courseData.map(item => (
+            <Card key={item.name} name={item.name} id={item.link} updateHW={handleHWs} />
+          ))}
+        </Grid>
+      </Grid>
+    </React.Fragment>
+  );
+}
+
+export default Courses;

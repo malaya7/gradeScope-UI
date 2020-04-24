@@ -6,10 +6,16 @@ const devUrl = 'http://localhost:8000'
 
 const baseUrl = NODE_ENV === 'production' ? prodUrl : devUrl;
 
+const idFromLink = (s) => {
+   const i = s.lastIndexOf('/');
+   return s.substr(i + 1);
+};
+
 const API_URLS = {
     base: baseUrl,
     getCourses: `${baseUrl}/courses`,
     getAssignments: `${baseUrl}/courses/id/assignments`,
+    idFromLink,
 };
 
   export default API_URLS;
