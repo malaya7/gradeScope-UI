@@ -1,6 +1,6 @@
 import React from 'react';
 import Appbar from './components/layout/Appbar';
-import CoursesCard from './components/CoursesCard';
+import CoursesCard from './components/Courses';
 
 function App() {
 

@@ -5,6 +5,11 @@ import API_URLS from '../config/config';
 
 function CoursesCard() {
     const [courseData, setCourseData] = useState([]);
+    const [hws, setHws] = useState([]);
+
+    const handleHWs = newValue => {
+      setHws(newValue);
+    }
 
     useEffect(() => {
       const fetchCourses = async() => {
@@ -14,12 +19,16 @@ function CoursesCard() {
           setCourseData(coursesArray);
       }
       fetchCourses();
+
     }, []);
-    let c = 0;
+  
     return (
       <React.Fragment>
       {courseData.map(item => (
-         <Card key={item.name} name={item.name} id={item.link} num={c++} />
+         <Card key={item.name} name={item.name} id={item.link} updateHW={handleHWs} />
+      ))}
+      {hws.Assignments && hws.Assignments.map(item => (
+         <Card key={item.Name} name={item.Name} id={item.Link} />
       ))}
       </React.Fragment>
     );
