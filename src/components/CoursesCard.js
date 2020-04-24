@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Card from './Card';
+import Card from './layout/Card';
 
 import API_URLS from '../config/config';
 
@@ -15,10 +15,11 @@ function CoursesCard() {
       }
       fetchCourses();
     }, []);
+    let c = 0;
     return (
       <React.Fragment>
       {courseData.map(item => (
-         <Card key={item.name} name={item.name} id={item.link} />
+         <Card key={item.name} name={item.name} id={item.link} num={c++} />
       ))}
       </React.Fragment>
     );

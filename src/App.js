@@ -1,5 +1,5 @@
 import React from 'react';
-import Appbar from './components/Appbar';
+import Appbar from './components/layout/Appbar';
 import CoursesCard from './components/CoursesCard';
 
 function App() {
