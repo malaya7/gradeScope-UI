@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 
 import Card from './layout/Card';
@@ -33,11 +32,25 @@ function Courses() {
       const res = await fetch(API_URLS.getCourses);
       const coursesArray = await res.json();
       setCourseData(coursesArray);
+      return coursesArray || [];
     }
-    fetchCourses();
-
+    const fetchAssighments = async () => {
+      const d = await fetchCourses();
+      const courseId = d[0].link;
+      const url = `${API_URLS.base}${courseId}/assignments`;
+      const res = await fetch(url);
+      if(res.status !== 200) {
+        alert("Click on Card to Display table")
+      } else {
+        const hwObj = await res.json();
+        setHws(hwObj);
+      }
+      
+    }
+    fetchAssighments();
   }, []);
-
+  // console.log(courseData)
+  // console.log(hw)
   return (
     <React.Fragment>
       <Grid container
@@ -46,7 +59,7 @@ function Courses() {
         alignItems="stretch"
         spacing={5}>
            <Grid item xs={8}>
-          {hw.Assignments && <Table className={classes.paper} item={hw}/>}
+          {hw.Assignments && <Table key={hw} className={classes.paper} item={hw}/>}
         </Grid>
         <Grid item xs={4}>
           {courseData.map(item => (
