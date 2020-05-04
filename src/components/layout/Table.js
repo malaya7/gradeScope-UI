@@ -27,10 +27,11 @@ export default function SimpleTable(props) {
         <TableHead>
           <TableRow>
             <TableCell>Number</TableCell>
+            <TableCell>Action</TableCell>
             <TableCell>Title</TableCell>
             <TableCell>Avg Score</TableCell>
             <TableCell>Id</TableCell>
-            <TableCell>Action</TableCell>
+           
           </TableRow>
         </TableHead>
         <TableBody>
@@ -39,10 +40,11 @@ export default function SimpleTable(props) {
               <TableCell component="th" scope="row">
                 {c++}
               </TableCell>
+              <TableCell><Popover courseInfo={row} /></TableCell>
               <TableCell>{row.Name}</TableCell>
               <TableCell>{row.AvgScore || 53}</TableCell>
               <TableCell>{config.idFromLink(row.Link)}</TableCell>
-              <TableCell><Popover courseInfo={row} /></TableCell>
+             
             </TableRow>
           ))}
         </TableBody>

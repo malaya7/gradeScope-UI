@@ -3,8 +3,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import Popover from '@material-ui/core/Popover';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
-
 import TextField from '@material-ui/core/TextField';
+
+import {LineChart,ColumnChart} from 'react-chartkick';
+import 'chart.js'
+
 import API_URLS from '../../config/config';
 
 const useStyles = makeStyles((theme) => ({
@@ -15,6 +18,10 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: theme.spacing(3),
         marginRight: theme.spacing(3),
         width: 250,
+    },
+    MuiPaper:{
+        width: 300,
+        height: 250,
     },
 }));
 
@@ -27,10 +34,13 @@ export default function SimplePopover(props) {
     const [days, setDays] = React.useState(3);
     const [freq, setFrq] = React.useState(1);
 
-  /*   const handleDateChange = (date) => {
-        setSelectedDate(date);
-    }; */
+    const [graph, setgraph] = React.useState(null);
+    const [bucket,setBucket] = React.useState(5);
 
+  /* const handleDateChange = (date) => {
+        setSelectedDate(date);
+    };
+ */
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -47,11 +57,15 @@ export default function SimplePopover(props) {
             alert("Days and frequency should be a postive number!");
             return;
         }
-        const isFuture = new Date(selectedDate).setHours(0,0,0,0) > new Date().setHours(0,0,0,0);
-        if(!isFuture) {
-            alert("Please Select date and time in Future!");
+        if( bucket < 1) {
+            alert("Graph Buckets should be postive number! Recomended value: 5");
             return;
         }
+        const isFuture = new Date(selectedDate).setHours(0,0,0,0) > new Date().setHours(0,0,0,0);
+       /*  if(!isFuture) {
+            alert("Please Select date and time in Future!");
+            return;
+        } */
         const url = `${API_URLS.base}/scrape`;
 
         const info = props.courseInfo.Link;
@@ -66,7 +80,7 @@ export default function SimplePopover(props) {
             },
             body: JSON.stringify({
                 stime: sstime,
-                forDays: days,
+                forDays: parseInt(days),
                 cId: ids[2],
                 aId: ids[4] ,
                 freq,
@@ -74,19 +88,23 @@ export default function SimplePopover(props) {
         });
         if(res.status !== 200) {
             alert("Server Error, Please Try Again later!");
-        } else {
-            alert("Request Accepted! -_-");
-        }
-        handleClose();
-
+        } 
+        const d = await res.json()
+        console.log(d)
+        setgraph(API_URLS.buildGraph(d))
     }
-    console.log(props);
-    console.log(selectedDate);
+    //console.log(props);
+    //console.log(selectedDate);
+  
+     //<Button aria-describedby={id} size="small" variant="text" color="secondary" onClick={handleClick}>
+     // handleClick </Button>
+     // TODO UNCOMMENT DATE CHECK
+     console.log(graph)
     return (
         <div>
-            <Button aria-describedby={id} size="small" variant="text" color="secondary" onClick={handleClick}>
-                Collect
-      </Button>
+           <Button aria-describedby={id} size="small" variant="text" color="secondary" onClick={handleClick}>
+            Preview
+            </Button>
             <Popover
                 id={id}
                 open={open}
@@ -96,11 +114,15 @@ export default function SimplePopover(props) {
                     vertical: 'bottom',
                     horizontal: 'center',
                 }}
+                style={{
+                height: '900px',
+                width: '750px'}}
                 transformOrigin={{
                     vertical: 'top',
                     horizontal: 'center',
-                }}
-            >
+                }}>
+                {graph ? <ColumnChart width="600px" height="500px" data={graph} download={true} /> : 
+                <React.Fragment>
                 <TextField
                     id="datetime-local"
                     label="Next appointment"
@@ -112,6 +134,7 @@ export default function SimplePopover(props) {
                         shrink: true,
                     }}
                 />
+             
                 <Box m={2} p={1}>
                     <TextField
                         id="standard-number"
@@ -136,9 +159,23 @@ export default function SimplePopover(props) {
                         }}
                     />
                 </Box>
+                {/* <Box m={2} p={1}>
+                    <TextField
+                        id="standard-number"
+                        label="Graph Buckets"
+                        type="number"
+                        defaultValue={bucket}
+                        onChange={(e) => setBucket(e.target.value)}
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                    />
+                </Box> */}
                 <Box m={2} p={1}>
                     <Button onClick={handleSend} variant="contained" size="medium" color="primary">Send!</Button>
                 </Box>
+                </React.Fragment>
+               }
             </Popover>
         </div>
     );
