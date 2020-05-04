@@ -62,10 +62,10 @@ export default function SimplePopover(props) {
             return;
         }
         const isFuture = new Date(selectedDate).setHours(0,0,0,0) > new Date().setHours(0,0,0,0);
-       /*  if(!isFuture) {
+       if(!isFuture) {
             alert("Please Select date and time in Future!");
             return;
-        } */
+        }
         const url = `${API_URLS.base}/scrape`;
 
         const info = props.courseInfo.Link;
