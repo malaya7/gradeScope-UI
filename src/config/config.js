@@ -14,9 +14,7 @@ const idFromLink = (s) => {
 const buildGraph = (data, sz=2) => {
  const res = [];
  if(data && data.data && data.data.length) {
-  const scores = data.data.join(',')
-  let numsArray = scores.split(',').map(Number);
-  numsArray = numsArray.sort((a, b) => a - b);
+  const numsArray = data.data.sort((a, b) => a - b);
 
   const max = numsArray[numsArray.length-1]; // || parseInt(data.max) || 50;
   let prev = 0;
