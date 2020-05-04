@@ -5,9 +5,6 @@ import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import TextField from '@material-ui/core/TextField';
 
-import {LineChart,ColumnChart} from 'react-chartkick';
-import 'chart.js'
-
 import API_URLS from '../../config/config';
 
 const useStyles = makeStyles((theme) => ({
@@ -19,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
         marginRight: theme.spacing(3),
         width: 250,
     },
-    MuiPaper:{
+    MuiPaper: {
         width: 300,
         height: 250,
     },
@@ -29,18 +26,19 @@ export default function SimplePopover(props) {
     const classes = useStyles();
 
     const [anchorEl, setAnchorEl] = React.useState(null);
-    const [selectedDate, setSelectedDate] = React.useState(new Date());
 
-    const [days, setDays] = React.useState(3);
+    const [selectedDate, setSelectedDate] = React.useState(new Date());
+    const [selectedDateEND, setSelectedDateEND] = React.useState(new Date());
     const [freq, setFrq] = React.useState(1);
 
     const [graph, setgraph] = React.useState(null);
-    const [bucket,setBucket] = React.useState(5);
+    const [bucket, setBucket] = React.useState(5);
+    const [days, setDays] = React.useState(3);
 
-  /* const handleDateChange = (date) => {
-        setSelectedDate(date);
-    };
- */
+    /* const handleDateChange = (date) => {
+          setSelectedDate(date);
+      };
+   */
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -53,17 +51,27 @@ export default function SimplePopover(props) {
     const id = open ? 'simple-popover' : undefined;
 
     const handleSend = async (e) => {
-        if(days < 1 || freq < 1) {
-            alert("Days and frequency should be a postive number!");
+        const freqInt = parseInt(freq)
+        if (freqInt < 1) {
+            alert("frequency should be a postive number!");
             return;
         }
-        if( bucket < 1) {
+        if (bucket < 1) {
             alert("Graph Buckets should be postive number! Recomended value: 5");
             return;
         }
-        const isFuture = new Date(selectedDate).setHours(0,0,0,0) > new Date().setHours(0,0,0,0);
-       if(process.env.NODE_ENV === 'production' && !isFuture) {
-            alert("Please Select date and time in Future!");
+        const isFuture = new Date(selectedDate).setHours(0, 0, 0, 0) > new Date().setHours(0, 0, 0, 0);
+        if (process.env.NODE_ENV === 'production' && !isFuture) {
+            alert("Please Select start date and time in Future!");
+            return;
+        }
+        const isAfterStart =  new Date(selectedDateEND) > new Date(selectedDate);
+        if (!isAfterStart) {
+            alert("Please Select End date After the Start date!");
+            return;
+        }
+        if (freqInt > 99) {
+            alert("Freq cannot be more than a 100");
             return;
         }
         const url = `${API_URLS.base}/scrape`;
@@ -72,6 +80,7 @@ export default function SimplePopover(props) {
         const ids = info.split('/');
 
         const sstime = new Date(selectedDate).toISOString();
+        const etime = new Date(selectedDateEND).toISOString();
         const res = await fetch(url, {
             method: "post",
             headers: {
@@ -80,30 +89,28 @@ export default function SimplePopover(props) {
             },
             body: JSON.stringify({
                 stime: sstime,
-                forDays: parseInt(days),
+                etime,
                 cId: ids[2],
-                aId: ids[4] ,
-                freq,
+                aId: ids[4],
+                freq: freqInt,
             })
         });
-        if(res.status !== 200) {
-            alert("Server Error, Please Try Again later!");
-        } 
-        const d = await res.json()
-        console.log(d)
-        setgraph(API_URLS.buildGraph(d))
+        if (res.status !== 200) {
+            const tx = await res.text();
+            alert("Server Error!\n"+ tx);
+        } else {
+            alert("Request Accepted -_-!");
+        }
+        /*  const d = await res.json()
+         console.log(d)
+         setgraph(API_URLS.buildGraph(d)) */
     }
-    //console.log(props);
-    //console.log(selectedDate);
-  
-     //<Button aria-describedby={id} size="small" variant="text" color="secondary" onClick={handleClick}>
-     // handleClick </Button>
-     // TODO UNCOMMENT DATE CHECK
-     console.log(graph)
+    //console.log(props)
+
     return (
         <div>
-           <Button aria-describedby={id} size="small" variant="text" color="secondary" onClick={handleClick}>
-            Preview
+            <Button aria-describedby={id} size="small" variant="text" color="secondary" onClick={handleClick}>
+                Collect
             </Button>
             <Popover
                 id={id}
@@ -114,52 +121,50 @@ export default function SimplePopover(props) {
                     vertical: 'bottom',
                     horizontal: 'center',
                 }}
-                style={{
-                height: '900px',
-                width: '750px'}}
                 transformOrigin={{
                     vertical: 'top',
                     horizontal: 'center',
                 }}>
-                {graph ? <ColumnChart width="600px" height="500px" data={graph} download={true} /> : 
                 <React.Fragment>
-                <TextField
-                    id="datetime-local"
-                    label="Next appointment"
-                    type="datetime-local"
-                    defaultValue={selectedDate}
-                    className={classes.textField}
-                    onChange={(e) => setSelectedDate(e.target.value)}
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                />
-             
-                <Box m={2} p={1}>
-                    <TextField
-                        id="standard-number"
-                        label="Number of Days"
-                        type="number"
-                        defaultValue={days}
-                        onChange={(e) => setDays(e.target.value)}
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                    />
-                </Box >
-                <Box m={2} p={1}>
-                    <TextField
-                        id="standard-number"
-                        label="frequency/Day"
-                        type="number"
-                        defaultValue={freq}
-                        onChange={(e) => setFrq(e.target.value)}
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                    />
-                </Box>
-                {/* <Box m={2} p={1}>
+                    <Box m={2} p={1}>
+                        <TextField
+                            id="datetime-local"
+                            label="Start "
+                            type="datetime-local"
+                            defaultValue={selectedDate}
+                            className={classes.textField}
+                            onChange={(e) => setSelectedDate(e.target.value)}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                        />
+                    </Box>
+                    <Box m={2} p={1}>
+                        <TextField
+                            id="datetime-local"
+                            label="End"
+                            type="datetime-local"
+                            defaultValue={selectedDateEND}
+                            className={classes.textField}
+                            onChange={(e) => setSelectedDateEND(e.target.value)}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                        />
+                    </Box >
+                    <Box m={3} p={1}>
+                        <TextField
+                            id="standard-number"
+                            label="frequency/Day"
+                            type="number"
+                            defaultValue={freq}
+                            onChange={(e) => setFrq(e.target.value)}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                        />
+                    </Box>
+                    {/* <Box m={2} p={1}>
                     <TextField
                         id="standard-number"
                         label="Graph Buckets"
@@ -171,11 +176,11 @@ export default function SimplePopover(props) {
                         }}
                     />
                 </Box> */}
-                <Box m={2} p={1}>
-                    <Button onClick={handleSend} variant="contained" size="medium" color="primary">Send!</Button>
-                </Box>
+                    <Box m={2} p={1}>
+                        <Button onClick={handleSend} variant="contained" size="medium" color="primary">Send!</Button>
+                    </Box>
                 </React.Fragment>
-               }
+
             </Popover>
         </div>
     );

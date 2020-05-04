@@ -8,6 +8,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Popover from './Popover';
+import GraphPopover from './GraphPopover'
 
 import config from "../../config/config";
 
@@ -26,10 +27,10 @@ export default function SimpleTable(props) {
       <Table className={classes.table} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>Number</TableCell>
+           <TableCell>Title</TableCell>
             <TableCell>Action</TableCell>
-            <TableCell>Title</TableCell>
-            <TableCell>Avg Score</TableCell>
+            <TableCell>Action</TableCell>
+           {/*  <TableCell>Avg Score</TableCell> */}
             <TableCell>Id</TableCell>
            
           </TableRow>
@@ -37,12 +38,10 @@ export default function SimpleTable(props) {
         <TableBody>
           {props.item.Assignments.map((row) => (
             <TableRow key={row.name}>
-              <TableCell component="th" scope="row">
-                {c++}
-              </TableCell>
-              <TableCell><Popover courseInfo={row} /></TableCell>
               <TableCell>{row.Name}</TableCell>
-              <TableCell>{row.AvgScore || 53}</TableCell>
+              <TableCell><GraphPopover courseInfo={row} /></TableCell>
+              <TableCell><Popover courseInfo={row} /></TableCell>
+              {/* <TableCell>{row.AvgScore || 53}</TableCell> */}
               <TableCell>{config.idFromLink(row.Link)}</TableCell>
              
             </TableRow>
