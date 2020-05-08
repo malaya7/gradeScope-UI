@@ -43,8 +43,7 @@ export default function MediaCard(props) {
       <CardActionArea onClick={handleClick}>
         <CardMedia
           className={classes.media}
-          image={props.name[0] === 'G' ? minion : jwong}
-        />
+          image={props.name[0] === 'G' ? minion : jwong}/>
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
             {props.name}

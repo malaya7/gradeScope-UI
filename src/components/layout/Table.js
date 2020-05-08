@@ -43,7 +43,6 @@ export default function SimpleTable(props) {
               <TableCell><Popover courseInfo={row} /></TableCell>
               {/* <TableCell>{row.AvgScore || 53}</TableCell> */}
               <TableCell>{config.idFromLink(row.Link)}</TableCell>
-             
             </TableRow>
           ))}
         </TableBody>

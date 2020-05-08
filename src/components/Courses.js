@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
 
-import Card from './layout/Card';
+import List from './layout/list';
 import Table from "./layout/Table";
 import API_URLS from '../config/config';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    flexGrow: 1,
+    flexGrow: 2,
   },
   paper: {
     padding: theme.spacing(2),
@@ -53,20 +52,10 @@ function Courses() {
   // console.log(hw)
   return (
     <React.Fragment>
-      <Grid container
-        direction="row-reverse"
-        justify="space-between"
-        alignItems="stretch"
-        spacing={5}>
-           <Grid item xs={8}>
-          {hw.Assignments && <Table key={hw} className={classes.paper} item={hw}/>}
-        </Grid>
-        <Grid item xs={4}>
-          {courseData.map(item => (
-            <Card key={item.name} name={item.name} id={item.link} updateHW={handleHWs} />
-          ))}
-        </Grid>
-      </Grid>
+      <List data={courseData} updateHW={handleHWs} />
+
+      {hw.Assignments && <Table key={hw} className={classes.paper} item={hw}/>}  
+ 
     </React.Fragment>
   );
 }

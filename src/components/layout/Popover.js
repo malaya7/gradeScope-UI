@@ -100,6 +100,7 @@ export default function SimplePopover(props) {
             alert("Server Error!\n"+ tx);
         } else {
             alert("Request Accepted -_-!");
+            handleClose();
         }
         /*  const d = await res.json()
          console.log(d)
