@@ -60,18 +60,18 @@ export default function SimplePopover(props) {
             alert("Graph Buckets should be postive number! Recomended value: 5");
             return;
         }
-        const isFuture = new Date(selectedDate).setHours(0, 0, 0, 0) > new Date().setHours(0, 0, 0, 0);
+        const isFuture = new Date(selectedDate) > new Date()
         if (process.env.NODE_ENV === 'production' && !isFuture) {
             alert("Please Select start date and time in Future!");
             return;
         }
         const isAfterStart =  new Date(selectedDateEND) > new Date(selectedDate);
         if (!isAfterStart) {
-            alert("Please Select End date After the Start date!");
+            alert("End date should be after the Start date!");
             return;
         }
-        if (freqInt > 99) {
-            alert("Freq cannot be more than a 100");
+        if (freqInt > 24) {
+            alert("Freq cannot be more than a 24 hours");
             return;
         }
         const url = `${API_URLS.base}/scrape`;
