@@ -38,11 +38,11 @@ export default function SelectedListItem(props) {
         } else {
             const hwArray = await res.json();
             props.updateHW(hwArray);
+            const courseName = props.data[i].name;
+            props.currIndex(courseName);
         }
 
     }
-    /* console.log(props)
-    console.log(selectedIndex) */
     return (
         <div className={classes.root}>
             <List component="nav"  aria-label="main mailbox folders">

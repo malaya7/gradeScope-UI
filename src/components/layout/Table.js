@@ -9,8 +9,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Popover from './Popover';
 import GraphPopover from './GraphPopover'
-
-import config from "../../config/config";
+import Download from "./downloadCSV";
 
 const useStyles = makeStyles({
   table: {
@@ -20,8 +19,8 @@ const useStyles = makeStyles({
 
 export default function SimpleTable(props) {
   const classes = useStyles();
-  console.log(props)
-  let c = 1;
+  // console.log(props)
+  
   return (
     <TableContainer component={Paper}>
       <Table className={classes.table} aria-label="simple table">
@@ -31,18 +30,19 @@ export default function SimpleTable(props) {
             <TableCell>Action</TableCell>
             <TableCell>Action</TableCell>
            {/*  <TableCell>Avg Score</TableCell> */}
-            <TableCell>Id</TableCell>
+            <TableCell>Download</TableCell>
            
           </TableRow>
         </TableHead>
         <TableBody>
           {props.item.Assignments.map((row) => (
-            <TableRow key={row.name}>
+            <TableRow key={row.Name}>
               <TableCell>{row.Name}</TableCell>
               <TableCell><GraphPopover courseInfo={row} /></TableCell>
               <TableCell><Popover courseInfo={row} /></TableCell>
               {/* <TableCell>{row.AvgScore || 53}</TableCell> */}
-              <TableCell>{config.idFromLink(row.Link)}</TableCell>
+              {/* <TableCell>{config.idFromLink(row.Link)}</TableCell> */}
+              <TableCell><Download  cname={props.cname} courseInfo={row} /></TableCell>
             </TableRow>
           ))}
         </TableBody>

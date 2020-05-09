@@ -47,7 +47,6 @@ export default function SimplePopover(props) {
     const handleSend = async (e) => {
         const info = props.courseInfo.Link;
         const url = `${API_URLS.base}/show/${info}`;
-        //const ids = info.split('/');
 
         const res = await fetch(url, {
             method: "get",

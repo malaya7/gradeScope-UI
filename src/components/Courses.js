@@ -21,16 +21,19 @@ function Courses() {
   const [courseData, setCourseData] = useState([]);
   const [hw, setHws] = useState([]);
 
+  const [currentCourse, setCurrentCourse] = useState([]);
+  
   const handleHWs = newValue => {
     setHws(newValue);
   }
 
   useEffect(() => {
     const fetchCourses = async () => {
-      console.log('fetching getCourses', API_URLS.getCourses);
+      // console.log('fetching getCourses', API_URLS.getCourses);
       const res = await fetch(API_URLS.getCourses);
       const coursesArray = await res.json();
       setCourseData(coursesArray);
+      setCurrentCourse(coursesArray[0].name)
       return coursesArray || [];
     }
     const fetchAssighments = async () => {
@@ -50,11 +53,12 @@ function Courses() {
   }, []);
   // console.log(courseData)
   // console.log(hw)
+  // console.log(currentCourse)
   return (
     <React.Fragment>
-      <List data={courseData} updateHW={handleHWs} />
+      <List data={courseData} updateHW={handleHWs} currIndex={setCurrentCourse} />
 
-      {hw.Assignments && <Table key={hw} className={classes.paper} item={hw}/>}  
+      {hw.Assignments && <Table key={hw} cname={currentCourse} className={classes.paper} item={hw}/>}  
  
     </React.Fragment>
   );
