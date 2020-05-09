@@ -25,7 +25,6 @@ const buildGraph = (data, sz=2) => {
   }
   res.push([`${max}`, numsArray.filter(x => x === max).length])
  }
- 
 console.log(res);
 return res.length ? res : null ;
 }
