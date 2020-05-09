@@ -34,6 +34,10 @@ export default function SimplePopover(props) {
     }
     const d = await res.json()
     console.log(d)
+    if(!d) {
+      alert("No Data were Found! did you scrape?");
+      handleClose();
+    }
     //setgraph(API_URLS.buildGraph(d))
     const formated = format(d);
     console.log(formated);
