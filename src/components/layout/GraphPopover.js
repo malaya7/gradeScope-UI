@@ -105,7 +105,7 @@ return (
           </BarChart>
         </Box>
         :
-        <Typography className={classes.typography}>The  of the Popover.</Typography>
+        <Typography className={classes.typography}>Loading...</Typography>
       }
     </Popover>
   </div>
