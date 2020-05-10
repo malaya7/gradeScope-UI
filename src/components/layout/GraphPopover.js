@@ -129,8 +129,8 @@ return (
             <ScatterChart width={830} height={550}
               margin={{ top: 20, right: 20, bottom: 10, left: 10 }}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" name="time" />
-              <ZAxis dataKey="sum" name="Number of Students:" />
+              <XAxis dataKey="name" name="Time" />
+              <ZAxis dataKey="sum" name="Number of Students" />
               <YAxis dataKey="score" range={[0, 100]} name="Points" unit="" />
               <Tooltip cursor={{ strokeDasharray: '3 3' }} />
               <Legend />
