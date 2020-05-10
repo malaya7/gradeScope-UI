@@ -7,7 +7,7 @@ import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 
 import {
-  BarChart, ScatterChart, Scatter, Bar, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend,
+  BarChart, ScatterChart, Scatter, Bar, LabelList, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts';
 import API_URLS from '../../config/config';
 
@@ -46,36 +46,35 @@ export default function SimplePopover(props) {
     setgraph(formated)
   }
   const format = darray => {
-
+    // BAR
     const f = [];
-    const x = [];
-    darray.map(e => {
-      const name = e.timestamp.replace("T", " - ").substring(0, e.timestamp.length - 6)
-      const sorted = e.data.sort((a, b) => a - b);
-      // const a = sorted.map(q => ({ name, uv: q }));
-
-      const max = sorted[sorted.length - 1];
-      let prev = 0;
-      x.push({ name, sep: 50 });
-      for (let i = 5; i <= max; i += 5) {
-        x.push({ name, grades: sorted.filter(x => x >= prev && x < i).length });
-        prev = i;
-      }
-      x.push({ name, grades: sorted.filter(x => x === max).length });
-      f.push(...x);
-    });
+    //scater
     const makeSens = []
-    const data01 = darray.map(e => {
-      console.log(e)
-      const name = e.timestamp.substring(5, e.timestamp.length - 8)
-
+    darray.map(e => {
+      const name = e.timestamp.replace("T","(").substring(5, e.timestamp.length - 8) + ")"
       const sorted = e.data.sort((a, b) => a - b);
-      
+
+      // Scater
       const counts = {};
       Array.prototype.forEach.call( sorted, num => (counts[num] = counts[num] ? counts[num] + 1 : 1));
       const ok = sorted.map(r => ({name, sum: counts[r], score: r}));
       makeSens.push(...ok);
-  });
+      // Scater End
+
+      // Bars
+      const x = [];
+      const max = sorted[sorted.length - 1];
+      let prev = 0;
+      x.push({ name, sep: 50 });
+      x.push({ b:0, name, grades: sorted.filter(x => x === 0).length });
+      for (let i = 5; i <= max; i += 5) {
+        x.push({ b:i, name, grades: sorted.filter(x => x >= prev && x < i).length });
+        prev = i;
+      }
+      // x.push({ b:max, name, grades: sorted.filter(x => x === max).length });
+      f.push(...x);
+    });
+    
   setg(makeSens);
   return f;
 };
@@ -121,8 +120,12 @@ return (
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar dataKey="sep" fill="#8884d8" />
-              <Bar dataKey="grades"  name="Number Of students" fill="#82ca9d" />
+              {/* <Bar dataKey="sep" fill="#8884d8" /> */}
+              <Bar dataKey="grades"  name="Students" fill="#82ca9d">
+             {/*  <LabelList dataKey="b" position="top" /> */}
+              </Bar>
+            <Bar dataKey="b"  name="Score" fill="#ff0074" />
+              
             </BarChart>
           </Box>
           <Box m={2} p={1}>
