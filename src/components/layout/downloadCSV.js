@@ -23,6 +23,7 @@ export default function SelectedListItem(props) {
             mean: e.mean || 'NOTFOUND',
             median: e.median || 'NOTFOUND',
             deviation: e.deviation || 'NOTFOUND',
+            TotalSubmissions: e.data.length || 'NOTFOUND',
             coureId: e.coureId || 'NOTFOUND',
             assignmentID: e.assignmentID || 'NOTFOUND',
         }));
