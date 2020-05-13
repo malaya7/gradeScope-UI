@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
         height: 250,
     },
     secondary: {
-        color: 'red'
+        color: 'green'
     }
 }));
 
@@ -83,7 +83,7 @@ export default function SimplePopover(props) {
         const url = `${API_URLS.base}/scrapers/delete/${f}`;
         const activeRes = await fetch(url);
         if (activeRes.status === 500) {
-            alert("Server Deletion Error")
+            alert("Scraper schedualed for delation")
             setactiveS(null)
             return;
         }
@@ -193,6 +193,9 @@ export default function SimplePopover(props) {
                 }}>
                 <React.Fragment>
                     {activeS && Object.keys(activeS).map(e => {
+                        const x =  props.courseInfo.Link.split('/');
+                        const current = `${x[2]}/${x[4]}`
+                        if(e === current){ 
                         return (
                             <Box m={2} p={1}>
                                 <Typography variant="subtitle1" color="primary" component="h2">
@@ -200,11 +203,12 @@ export default function SimplePopover(props) {
                                 </Typography>
                                 <List className={classes.root}>
                                     <ListItem button  data-k={e} onClick={handleRemove}>
-                                        <ListItemText data-k={e} secondary="Delete" primary={activeS[e].AName} className={classes.secondary} />
+                                        <ListItemText data-k={e} secondary="Click to Delete" primary={activeS[e].AName} className={classes.secondary} />
                                     </ListItem>
                                 </List>
                             </Box>
-                        )
+                        )}
+                        return null;
                     })
                     }
 
