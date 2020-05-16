@@ -1,31 +1,33 @@
-import React from 'react';
+import React, {Component } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Popover from '@material-ui/core/Popover';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
 import Box from '@material-ui/core/Box';
+import { withStyles } from '@material-ui/core/styles';
 
 import {
   BarChart, ScatterChart, Scatter, Bar, LabelList, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts';
 import API_URLS from '../../config/config';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles =  theme => ({
   typography: {
     padding: theme.spacing(2),
   },
-}));
+});
 
-export default function SimplePopover(props) {
-  const classes = useStyles();
-  const [anchorEl, setAnchorEl] = React.useState(null);
+class SimplePopover extends Component {  
+    state = {
+        anchorEl:null,
+        graph: false,
+        data01: false,
+        index:0,
+  } 
 
-  const [graph, setgraph] = React.useState(false);
-  const [data01, setg] = React.useState(false);
-
-  const handleSend = async (e) => {
-    const info = props.courseInfo.Link;
+  handleSend = async (e) => {
+    const info = this.props.courseInfo.Link;
     const url = `${API_URLS.base}/show/${info}`;
 
     const res = await fetch(url);
@@ -37,29 +39,26 @@ export default function SimplePopover(props) {
     console.log(d)
     if (!d) {
       alert("No Data were Found! did you scrape?");
-      handleClose();
+      this.handleClose();
       return
     }
-    //setgraph(API_URLS.buildGraph(d))
-    const formated = format(d);
+    const formated = this.format(d);
     console.log(formated);
-    setgraph(formated)
+    this.setState({graph: d})
+    this.setState({data01: formated})
   }
-  const format = darray => {
+  format = (darray,i) => {
     // BAR
     const f = [];
-    //scater
-    const makeSens = []
-    darray.map(e => {
+    let ind = 0;
+      if(i && i < darray.length){
+        ind = i;
+      }
+      const e = darray[ind];
+      console.log(e)
       const name = new Date(e.timestamp.toLocaleString()).toLocaleString('en-US')
       const sorted = e.data.sort((a, b) => a - b);
 
-      // Scater
-      const counts = {};
-      Array.prototype.forEach.call(sorted, num => (counts[num] = counts[num] ? counts[num] + 1 : 1));
-      const ok = sorted.map(r => ({ name, sum: counts[r], score: r }));
-      makeSens.push(...ok);
-      // Scater End
 
       // Bars
       const x = [];
@@ -73,36 +72,63 @@ export default function SimplePopover(props) {
       }
       // x.push({ b:max, name, grades: sorted.filter(x => x === max).length });
       f.push(...x);
-    });
 
-    setg(makeSens);
     return f;
   };
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-    handleSend();
+  componentDidMount(){
+    setInterval(this.updateChart, 5000);
+}
+
+updateChart = () => {
+  const d = this.state.graph
+  let index = this.state.index;
+ 
+  if(d && d.length) {
+    if(index >= d.length) {
+      index = 0;
+    }   
+    const formated = this.format(d, index);
+    index++ ;
+    this.setState({index, data01: formated})
+  }
+  
+};
+
+   handleClick = (event) => {
+    this.setState({anchorEl:event.currentTarget});
+    this.handleSend();
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
+   handleClose = () => {
+    this.setState({
+      anchorEl:null,
+      graph: false,
+      data01: false,
+      index:0,});
   };
+  render() {
+  const { classes } = this.props;
 
+  const { anchorEl } = this.state;
   const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
 
-  console.log(graph)
-  console.log(data01)
+  const graph = this.state.graph
+  const moreData = this.state.data01;
+
+  console.log(this.state)
+  
   return (
     <div>
-      <Button aria-describedby={id} variant="outlined" color="primary" onClick={handleClick}>
+      <Button aria-owns={open ? 'simple-popper' : undefined}
+              variant="outlined" color="primary" onClick={this.handleClick}>
         Show
       </Button>
       <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
+          id="simple-popper"
+          open={open}
+          anchorEl={anchorEl}
+          onClose={this.handleClose}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'center',
@@ -114,7 +140,7 @@ export default function SimplePopover(props) {
         {graph ?
           <React.Fragment>
             <Box m={2} p={1}>
-              <BarChart width={990} height={550} data={graph}>
+              <BarChart width={990} height={550} data={moreData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis />
@@ -128,7 +154,7 @@ export default function SimplePopover(props) {
 
               </BarChart>
             </Box>
-            <Box m={2} p={1}>
+            {/* <Box m={2} p={1}>
               <ScatterChart width={830} height={550}
                 margin={{ top: 20, right: 20, bottom: 10, left: 10 }}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -139,7 +165,7 @@ export default function SimplePopover(props) {
                 <Legend />
                 <Scatter name={props.courseInfo.Name} data={data01} fill="#82ca9d" />
               </ScatterChart>
-            </Box>
+            </Box> */}
           </React.Fragment>
           :
           <Typography className={classes.typography}>Loading...</Typography>
@@ -147,24 +173,7 @@ export default function SimplePopover(props) {
       </Popover>
     </div>
   );
+      }
 }
 
-/*
- const [graph, setgraph] = React.useState(false);
-
-  const handleSend = async (e) => {
-    const info = props.courseInfo.Link;
-    const url = `${API_URLS.base}/show/${info}`;
-
-    const res = await fetch(url);
-    if (res.status !== 200) {
-        alert("Server Error, Please Try Again later!");
-        return;
-    }
-    const d = await res.json()
-    console.log(d)
-    setgraph(API_URLS.buildGraph(d))
-}
-
-
-*/
+export default withStyles(useStyles)(SimplePopover);
