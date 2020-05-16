@@ -52,7 +52,8 @@ class SimplePopover extends Component {
   } 
 
   handleSend = async (e) => {
-    const info = this.props.courseInfo.Link;
+    // const info = this.props.courseInfo.Link;
+    const info = 'courses/107294/assignments/476595'
     const url = `${API_URLS.base}/show/${info}`;
 
     const res = await fetch(url);
@@ -129,7 +130,6 @@ updateChart = () => {
       data01: false,
       index:0,});
   };
-  
   render() {
   const { classes } = this.props;
 
@@ -140,7 +140,6 @@ updateChart = () => {
   const moreData = this.state.data01;
 
   console.log(this.state)
-  console.log(this.props)
 
   return (
     <div>
@@ -148,7 +147,7 @@ updateChart = () => {
               variant="outlined" color="primary" onClick={this.handleClick}>
         Show
       </Button>
-      <Popover
+     {/*  <Popover
           id="simple-popper"
           open={open}
           anchorEl={anchorEl}
@@ -160,7 +159,7 @@ updateChart = () => {
         transformOrigin={{
           vertical: 'top',
           horizontal: 'center',
-        }}>
+        }}> */}
         {graph ?
           <React.Fragment>
             <Box m="auto">
@@ -207,7 +206,7 @@ updateChart = () => {
           :
           <Typography className={classes.typography}>Loading...</Typography>
         }
-      </Popover>
+    {/*   </Popover> */}
     </div>
   );
       }
