@@ -8,13 +8,30 @@ import Box from '@material-ui/core/Box';
 import { withStyles } from '@material-ui/core/styles';
 
 import {
-  BarChart, ScatterChart, Scatter, Bar, LabelList, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend,
+  BarChart, ScatterChart, Scatter, Label, Bar, LabelList, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts';
 import API_URLS from '../../config/config';
 
 const useStyles =  theme => ({
   typography: {
     padding: theme.spacing(2),
+  },
+  marginAutoContainer: {
+    width: 500,
+    height: 80,
+    display: 'flex',
+    backgroundColor: 'gold',
+  },
+  marginAutoItem: {
+    margin: 'auto'
+  },
+  alignItemsAndJustifyContent: {
+    width: 500,
+    height: 80,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'pink',
   },
 });
 
@@ -24,6 +41,14 @@ class SimplePopover extends Component {
         graph: false,
         data01: false,
         index:0,
+        stks:["#82ca9d", "#8884d8", "#81c2ea", "#008080","#ffff00", "#e40000", "#ec7426", "#88df86",
+              "#FF00FF", "#800080", "#800000", "#000000", "#008080", "#008080","#008080",
+              "#008080" ,"#008080","#008080","#008080","#008080","#008080","#008080","#008080","#008080",
+              "#008080","#008080","#008080","#008080","#008080","#008080","#008080","#008080","#008080",
+              "#008080","#008080","#008080","#008080","#008080","#008080","#008080","#008080","#008080",
+              "#008080","#008080","#008080","#008080","#008080","#008080","#008080","#008080","#008080",
+              "#008080","#008080","#008080","#008080","#008080","#008080","#008080","#008080","#008080","#008080",
+              "#008080","#008080","#008080","#008080","#008080","#008080","#008080","#008080","#008080"]
   } 
 
   handleSend = async (e) => {
@@ -64,13 +89,13 @@ class SimplePopover extends Component {
       const x = [];
       const max = sorted[sorted.length - 1];
       let prev = 0;
-      x.push({ name, sep: 50 });
-      x.push({ b: 0, name, grades: sorted.filter(x => x === 0).length });
+
+      x.push({sco:0, name, grades: sorted.filter(x => x === 0).length });
       for (let i = 5; i <= max; i += 5) {
-        x.push({ b: i, name, grades: sorted.filter(x => x >= prev && x < i).length });
+        x.push({sco:`${prev}-${i-1}`, name, grades: sorted.filter(x => x >= prev && x < i).length });
         prev = i;
       }
-      // x.push({ b:max, name, grades: sorted.filter(x => x === max).length });
+      x.push({ sco: max, name, grades: sorted.filter(x => x === max).length });
       f.push(...x);
 
     return f;
@@ -85,11 +110,9 @@ updateChart = () => {
   let index = this.state.index;
  
   if(d && d.length) {
-    if(index >= d.length) {
-      index = 0;
-    }   
     const formated = this.format(d, index);
     index++ ;
+    index = (index >= d.length) ? 0 : index;
     this.setState({index, data01: formated})
   }
   
@@ -117,7 +140,7 @@ updateChart = () => {
   const moreData = this.state.data01;
 
   console.log(this.state)
-  
+
   return (
     <div>
       <Button aria-owns={open ? 'simple-popper' : undefined}
@@ -139,33 +162,47 @@ updateChart = () => {
         }}>
         {graph ?
           <React.Fragment>
-            <Box m={2} p={1}>
+            <Box m="auto">
+            <Typography variant="h5" color="secondary">
+              Date  {graph[this.state.index].timestamp.toLocaleString('en-US').split("T")[0]}
+             </Typography>
+             <Typography variant="h5" color="secondary">
+              Time  {graph[this.state.index].timestamp.toLocaleString('en-US').split("T")[1]}
+             </Typography>
+             <Typography variant="h5"
+                         color="primary">
+              Mean {graph[this.state.index].mean}
+            </Typography>
+            <Typography variant="h5"
+                         color="primary">
+              Highest Score {graph[this.state.index].max}
+            </Typography>
+            <Typography variant="caption"
+                         color="primary">
+              DataSet: {this.state.index} <br/>
+              Number DataSets {graph.length}
+            </Typography>
+             </Box>
+            <Box m={3} p={1}>
               <BarChart width={990} height={550} data={moreData}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
+                <XAxis dataKey="sco"> 
+                </XAxis>
+                <YAxis  label={{ value: 'Number of Students', angle: -90, position: 'insideLeft' }}/> 
                 <Tooltip />
-                <Legend />
-                {/* <Bar dataKey="sep" fill="#8884d8" /> */}
-                <Bar dataKey="grades" name="Students" fill="#82ca9d">
-                  {/*  <LabelList dataKey="b" position="top" /> */}
+                <Legend/>
+                <Bar 
+                dataKey="grades" 
+                name="# Students" 
+                stroke="#FFFF00"  
+                type="monotone" 
+                fill={this.state.stks[this.state.index]} 
+                >
+                 <LabelList dataKey="grades" position="top" /> 
                 </Bar>
-                <Bar dataKey="b" name="Score" fill="#ff0074" />
-
+              
               </BarChart>
             </Box>
-            {/* <Box m={2} p={1}>
-              <ScatterChart width={830} height={550}
-                margin={{ top: 20, right: 20, bottom: 10, left: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" name="Time" />
-                <ZAxis dataKey="sum" name="Number of Students" />
-                <YAxis dataKey="score" range={[0, 100]} name="Points" unit="" />
-                <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-                <Legend />
-                <Scatter name={props.courseInfo.Name} data={data01} fill="#82ca9d" />
-              </ScatterChart>
-            </Box> */}
           </React.Fragment>
           :
           <Typography className={classes.typography}>Loading...</Typography>
