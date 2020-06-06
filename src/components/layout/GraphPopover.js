@@ -103,15 +103,15 @@ class SimplePopover extends Component {
   };
 
  async componentDidMount(){
-    //setInterval(this.updateChart, 5000);
+    setInterval(this.updateChart, 5000);
     const linksplit =  this.props.courseInfo.Link.split('/');
-  let imgLink = `https://ics53assest.s3-us-west-1.amazonaws.com/${linksplit[2]}_${linksplit[4]}.gif`;
-  this.setState({imgUrl: imgLink});
-  const req = await fetch(imgLink);
-  console.log(req)
-  if(req.status === 403) {
-    this.setState({imgUrl: "S3 Image Link Not Found!"});
-  }
+    let imgLink = `https://ics53assest.s3-us-west-1.amazonaws.com/${linksplit[2]}_${linksplit[4]}.gif`;
+    this.setState({imgUrl: imgLink});
+    const req = await fetch(imgLink);
+    console.log(req)
+    if(req.status === 403) {
+      this.setState({imgUrl: "S3 Image Link Not Found!"});
+    }
 }
 
 updateChart = () => {
