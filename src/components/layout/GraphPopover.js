@@ -110,7 +110,7 @@ class SimplePopover extends Component {
   const req = await fetch(imgLink);
   console.log(req)
   if(req.status === 403) {
-    this.setState({imgUrl: "Not Exists"});
+    this.setState({imgUrl: "S3 Image Link Not Found!"});
   }
 }
 
@@ -128,7 +128,7 @@ updateChart = () => {
 };
    handleClick = async (event) => {
     this.setState({anchorEl:event.currentTarget});
-    //this.handleSend();
+    this.handleSend();
  
   };
 
@@ -151,13 +151,8 @@ updateChart = () => {
 
   console.log(this.state)
   console.log(this.props)
- /*  const linksplit =  this.props.courseInfo.Link.split('/');
-  let imgLink = `https://ics53assest.s3-us-west-1.amazonaws.com/${linksplit[2]}_${linksplit[4]}.gif`;
-  const req = await fetch(imgLink);
-  if(req.status === 403) {
-    imgLink = "Not Exits"
-  } */
-  /* return (
+
+  return (
     <div>
       <Button aria-owns={open ? 'simple-popper' : undefined}
               variant="outlined" color="primary" onClick={this.handleClick}>
@@ -178,11 +173,16 @@ updateChart = () => {
         }}>
         {graph ?
           <React.Fragment>
+             <Box m="auto">
+             <Typography variant="h5" color="secondary">
+               {this.state.imgUrl}
+              </Typography>
+            </Box>
             <Box m="auto">
-            <Typography variant="h5" color="secondary">
+            <Typography variant="h5" color="primary">
               Date  {graph[this.state.index].timestamp.toLocaleString('en-US').split("T")[0]}
              </Typography>
-             <Typography variant="h5" color="secondary">
+             <Typography variant="h5" color="primary">
               Time  {graph[this.state.index].timestamp.toLocaleString('en-US').split("T")[1]}
              </Typography>
              <Typography variant="h5"
@@ -219,40 +219,15 @@ updateChart = () => {
               </BarChart>
             </Box>
           </React.Fragment>
-          :
+          : <div>
+          {this.state.imgUrl}
           <Typography className={classes.typography}>Loading...</Typography>
+          </div>
         }
       </Popover>
     </div>
-  ); */
-  return (
-    <div>
-      <Button aria-owns={open ? 'simple-popper' : undefined}
-              variant="outlined" color="primary" onClick={this.handleClick}>
-        Show
-      </Button>
-      <Popover
-          id="simple-popper"
-          open={open}
-          anchorEl={anchorEl}
-          onClose={this.handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'center',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'center',
-        }}>
-          <div>
+  ); 
 
-          </div>
-          <div style={{ padding:'10 10', margin:'50 50'}}>
-           {this.state.imgUrl}
-          </div>
-    </Popover>
-    </div>
-  );
       }
 }
 
